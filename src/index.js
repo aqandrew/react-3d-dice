@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import * as THREE from 'three'
 import { Canvas } from 'react-three-fiber'
-import { Tetrahedron, Box, Octahedron, Icosahedron } from '@react-three/drei'
+import { Tetrahedron, Box, Octahedron, Dodecahedron, Icosahedron } from '@react-three/drei'
 import { Physics, usePlane, useBox, useConvexPolyhedron } from 'use-cannon'
 import niceColors from 'nice-color-palettes'
 import './styles.css'
@@ -64,6 +64,24 @@ const D8 = (props) => {
   )
 }
 
+const D12 = (props) => {
+  const radius = 2
+  const dodecahedronGeometry = new THREE.DodecahedronGeometry(radius)
+  const [ref, api] = useConvexPolyhedron(() => {
+    return {
+      args: dodecahedronGeometry,
+      mass: 1,
+      ...props
+    }
+  })
+
+  return (
+    <Dodecahedron args={radius} ref={ref} onClick={() => api.applyImpulse([0, 20, 0], [0, 0, 0])} castShadow receiveShadow>
+      <meshNormalMaterial attach="material" />
+    </Dodecahedron>
+  )
+}
+
 const D20 = (props) => {
   const radius = 2
   const icosahedronGeometry = new THREE.IcosahedronGeometry(radius)
@@ -93,9 +111,10 @@ ReactDOM.render(
       <Plane color={niceColors[17][2]} position={[10, 0, 0]} rotation={[0, -1, 0]} />
       <Plane color={niceColors[17][3]} position={[0, 10, 0]} rotation={[1, 0, 0]} />
       <Plane color={niceColors[17][0]} position={[0, -10, 0]} rotation={[-1, 0, 0]} />
-      <D4 position={[-4, 0, 2]} rotation={[1, 0, 0]} />
+      <D4 position={[-4, 0, 2]} rotation={[0, 1, 0]} />
       <D6 position={[0, 0, 2]} />
       <D8 position={[0, 4, 2]} rotation={[1, 1, 0]} />
+      <D12 position={[0, -4, 2]} rotation={[1, 0, 0]} />
       <D20 position={[4, 0, 2]} rotation={[2, 0, 0]} />
     </Physics>
   </Canvas>,
