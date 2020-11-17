@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import * as THREE from 'three'
 import { Canvas } from 'react-three-fiber'
-import { Tetrahedron, Box, Octahedron, Dodecahedron, Icosahedron } from '@react-three/drei'
+import { Tetrahedron, Box, Octahedron, Polyhedron, Dodecahedron, Icosahedron } from '@react-three/drei'
 import { Physics, usePlane, useBox, useConvexPolyhedron } from 'use-cannon'
 import niceColors from 'nice-color-palettes'
 import './styles.css'
@@ -109,10 +109,9 @@ const D10 = (props) => {
   })
 
   return (
-    <mesh ref={ref} onClick={() => api.applyImpulse([0, 20, 0], [0, 0, 0])} castShadow receiveShadow>
-      <polyhedronGeometry attach="geometry" args={args} />
+    <Polyhedron args={args} ref={ref} onClick={() => api.applyImpulse([0, 20, 0], [0, 0, 0])} castShadow receiveShadow>
       <meshNormalMaterial attach="material" />
-    </mesh>
+    </Polyhedron>
   )
 }
 
