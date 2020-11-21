@@ -7,6 +7,36 @@ import { Physics, usePlane, useBox, useConvexPolyhedron } from 'use-cannon'
 import niceColors from 'nice-color-palettes'
 import './styles.css'
 
+const textColor = 'white'
+const dieColor = 'indigo'
+
+const calculateTextureSize = (approx) => {
+  return Math.max(128, Math.pow(2, Math.floor(Math.log(approx) / Math.log(2))))
+}
+
+const createTextTexture = (text, color, backColor) => {
+  // TODO Set size/textMargin for each shape
+  const size = 100
+  const textMargin = 1
+
+  const canvas = document.createElement('canvas')
+  const context = canvas.getContext('2d')
+  const ts = calculateTextureSize(size / 2 + size * textMargin) * 2
+  canvas.width = canvas.height = ts
+  context.font = ts / (1 + 2 * textMargin) + 'pt Arial'
+  context.fillStyle = backColor
+  context.fillRect(0, 0, canvas.width, canvas.height)
+  context.textAlign = 'center'
+  context.textBaseline = 'middle'
+  context.fillStyle = color
+  context.fillText(text, canvas.width / 2, canvas.height / 2)
+  const texture = new THREE.CanvasTexture(canvas)
+  return texture
+}
+
+// TODO Generate UV maps for non-Box shapes programatically
+// https://github.com/byWulf/threejs-dice/blob/master/lib/dice.js#L285
+
 const Plane = ({ color, ...props }) => {
   const [ref] = usePlane(() => ({ ...props }))
   return (
@@ -36,21 +66,15 @@ const D4 = (props) => {
 }
 
 const D6 = (props) => {
+  const sides = 6
   const radius = 2.5
   const [ref, api] = useBox(() => ({ args: [radius, radius, radius], mass: 1, ...props }))
 
-  // TODO Write numbers on each face
-  // TODO Generate UV maps for non-Box shapes programatically
-  // https://github.com/byWulf/threejs-dice/blob/master/lib/dice.js#L285
-
   return (
     <Box args={[radius, radius, radius]} ref={ref} onClick={() => api.applyImpulse([0, 20, 0], [0, 0, 0])} castShadow receiveShadow>
-      <meshPhongMaterial attachArray="material" color="brown" />
-      <meshPhongMaterial attachArray="material" color="black" />
-      <meshPhongMaterial attachArray="material" color="grey" />
-      <meshPhongMaterial attachArray="material" color="white" />
-      <meshPhongMaterial attachArray="material" color="lightgrey" />
-      <meshPhongMaterial attachArray="material" color="darkgrey" />
+      {Array.from(Array(sides)).map((_, i) => (
+        <meshPhongMaterial attachArray="material" map={createTextTexture(i + 1, textColor, dieColor)} key={i} />
+      ))}
     </Box>
   )
 }
