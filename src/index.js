@@ -38,11 +38,22 @@ const D4 = (props) => {
 const D6 = (props) => {
   const radius = 2.5
   const [ref, api] = useBox(() => ({ args: [radius, radius, radius], mass: 1, ...props }))
+  // TODO Write numbers on each face
+  // TODO Is there a more declarative (JSX) way to do this?
+  // This doesn't work with non-Box geometries
+  // ...even though the textures map to other shapes' faces just fine here:
+  // https://github.com/byWulf/threejs-dice/blob/master/lib/dice.js#L368
+  const materials = [
+    new THREE.MeshPhongMaterial({ color: 'brown' }),
+    new THREE.MeshPhongMaterial({ color: 'black' }),
+    new THREE.MeshPhongMaterial({ color: 'grey' }),
+    new THREE.MeshPhongMaterial({ color: 'white' }),
+    new THREE.MeshPhongMaterial({ color: 'lightgrey' }),
+    new THREE.MeshPhongMaterial({ color: 'darkgrey' })
+  ]
 
   return (
-    <Box args={[radius, radius, radius]} ref={ref} onClick={() => api.applyImpulse([0, 20, 0], [0, 0, 0])} castShadow receiveShadow>
-      <meshNormalMaterial attach="material" />
-    </Box>
+    <Box args={[radius, radius, radius]} material={materials} ref={ref} onClick={() => api.applyImpulse([0, 20, 0], [0, 0, 0])} castShadow receiveShadow></Box>
   )
 }
 
