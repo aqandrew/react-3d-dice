@@ -38,22 +38,20 @@ const D4 = (props) => {
 const D6 = (props) => {
   const radius = 2.5
   const [ref, api] = useBox(() => ({ args: [radius, radius, radius], mass: 1, ...props }))
+
   // TODO Write numbers on each face
-  // TODO Is there a more declarative (JSX) way to do this?
-  // This doesn't work with non-Box geometries
-  // ...even though the textures map to other shapes' faces just fine here:
-  // https://github.com/byWulf/threejs-dice/blob/master/lib/dice.js#L368
-  const materials = [
-    new THREE.MeshPhongMaterial({ color: 'brown' }),
-    new THREE.MeshPhongMaterial({ color: 'black' }),
-    new THREE.MeshPhongMaterial({ color: 'grey' }),
-    new THREE.MeshPhongMaterial({ color: 'white' }),
-    new THREE.MeshPhongMaterial({ color: 'lightgrey' }),
-    new THREE.MeshPhongMaterial({ color: 'darkgrey' })
-  ]
+  // TODO Generate UV maps for non-Box shapes programatically
+  // https://github.com/byWulf/threejs-dice/blob/master/lib/dice.js#L285
 
   return (
-    <Box args={[radius, radius, radius]} material={materials} ref={ref} onClick={() => api.applyImpulse([0, 20, 0], [0, 0, 0])} castShadow receiveShadow></Box>
+    <Box args={[radius, radius, radius]} ref={ref} onClick={() => api.applyImpulse([0, 20, 0], [0, 0, 0])} castShadow receiveShadow>
+      <meshPhongMaterial attachArray="material" color="brown" />
+      <meshPhongMaterial attachArray="material" color="black" />
+      <meshPhongMaterial attachArray="material" color="grey" />
+      <meshPhongMaterial attachArray="material" color="white" />
+      <meshPhongMaterial attachArray="material" color="lightgrey" />
+      <meshPhongMaterial attachArray="material" color="darkgrey" />
+    </Box>
   )
 }
 
