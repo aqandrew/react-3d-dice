@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import ReactDOM from 'react-dom'
 import * as THREE from 'three'
 import { Canvas } from 'react-three-fiber'
@@ -34,9 +34,6 @@ const createTextTexture = (text, color, backColor) => {
   return texture
 }
 
-// TODO Generate UV maps for non-Box shapes programatically
-// https://github.com/byWulf/threejs-dice/blob/master/lib/dice.js#L285
-
 const Plane = ({ color, ...props }) => {
   const [ref] = usePlane(() => ({ ...props }))
   return (
@@ -48,6 +45,8 @@ const Plane = ({ color, ...props }) => {
 }
 
 const D4 = (props) => {
+  const sides = 4
+  const verticesPerFace = 3
   const radius = 2
   const tetrahedronGeometry = new THREE.TetrahedronGeometry(radius)
   const [ref, api] = useConvexPolyhedron(() => {
@@ -58,9 +57,23 @@ const D4 = (props) => {
     }
   })
 
+  // Defining groups allows us to use a material array for BufferGeometry
+  useEffect(() => {
+    if (ref.current) {
+      for (let i = 0; i < sides; i++) {
+        ref.current.geometry.addGroup(i * verticesPerFace, verticesPerFace, i)
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   return (
     <Tetrahedron args={radius} ref={ref} onClick={() => api.applyImpulse([0, 20, 0], [0, 0, 0])} castShadow receiveShadow>
-      <meshNormalMaterial attach="material" />
+      {/* TODO Write texture creation function that's specific to D4 */}
+      <meshPhongMaterial attachArray="material" color="grey" />
+      <meshPhongMaterial attachArray="material" color="white" />
+      <meshPhongMaterial attachArray="material" color="brown" />
+      <meshPhongMaterial attachArray="material" color="black" />
     </Tetrahedron>
   )
 }
@@ -89,6 +102,8 @@ const D8 = (props) => {
       ...props
     }
   })
+
+  // TODO Define groups
 
   return (
     <Octahedron args={radius} ref={ref} onClick={() => api.applyImpulse([0, 20, 0], [0, 0, 0])} castShadow receiveShadow>
@@ -141,6 +156,8 @@ const D10 = (props) => {
     }
   })
 
+  // TODO Define groups
+
   return (
     <Polyhedron args={args} ref={ref} onClick={() => api.applyImpulse([0, 20, 0], [0, 0, 0])} castShadow receiveShadow>
       <meshNormalMaterial attach="material" />
@@ -159,6 +176,8 @@ const D12 = (props) => {
     }
   })
 
+  // TODO Define groups
+
   return (
     <Dodecahedron args={radius} ref={ref} onClick={() => api.applyImpulse([0, 20, 0], [0, 0, 0])} castShadow receiveShadow>
       <meshNormalMaterial attach="material" />
@@ -176,6 +195,8 @@ const D20 = (props) => {
       ...props
     }
   })
+
+  // TODO Define groups
 
   return (
     <Icosahedron args={radius} ref={ref} onClick={() => api.applyImpulse([0, 20, 0], [0, 0, 0])} castShadow receiveShadow>
