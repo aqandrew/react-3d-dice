@@ -93,7 +93,9 @@ const D6 = (props) => {
 }
 
 const D8 = (props) => {
+  const sides = 8
   const radius = 2
+  const verticesPerFace = 3
   const octahedronGeometry = new THREE.OctahedronGeometry(radius)
   const [ref, api] = useConvexPolyhedron(() => {
     return {
@@ -103,11 +105,31 @@ const D8 = (props) => {
     }
   })
 
-  // TODO Define groups
+  // Defining groups allows us to use a material array for BufferGeometry
+  useEffect(() => {
+    if (ref.current) {
+      for (let i = 0; i < sides; i++) {
+        ref.current.geometry.addGroup(i * verticesPerFace, verticesPerFace, i)
+      }
+      console.log(ref.current)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <Octahedron args={radius} ref={ref} onClick={() => api.applyImpulse([0, 20, 0], [0, 0, 0])} castShadow receiveShadow>
-      <meshNormalMaterial attach="material" />
+      {/* TODO What's causing text textures to appear stretched? Is the UV map messed up? */}
+      {/* {Array.from(Array(sides)).map((_, i) => (
+        <meshPhongMaterial attachArray="material" map={createTextTexture(i + 1, textColor, dieColor)} key={i} />
+      ))} */}
+      <meshPhongMaterial attachArray="material" color="grey" />
+      <meshPhongMaterial attachArray="material" color="white" />
+      <meshPhongMaterial attachArray="material" color="brown" />
+      <meshPhongMaterial attachArray="material" color="black" />
+      <meshPhongMaterial attachArray="material" color="azure" />
+      <meshPhongMaterial attachArray="material" color="beige" />
+      <meshPhongMaterial attachArray="material" color="cornflowerblue" />
+      <meshPhongMaterial attachArray="material" color="maroon" />
     </Octahedron>
   )
 }
