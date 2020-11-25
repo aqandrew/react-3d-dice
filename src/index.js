@@ -135,6 +135,8 @@ const D8 = (props) => {
 }
 
 const D10 = (props) => {
+  const sides = 10
+  const verticesPerFace = 6
   const radius = 2
   const vertices = [
     [0, 0, 1],
@@ -147,6 +149,7 @@ const D10 = (props) => {
   }
 
   const faces = [
+    [0, 11, 2],
     [0, 2, 3],
     [0, 3, 4],
     [0, 4, 5],
@@ -156,7 +159,6 @@ const D10 = (props) => {
     [0, 8, 9],
     [0, 9, 10],
     [0, 10, 11],
-    [0, 11, 2],
     [1, 3, 2],
     [1, 4, 3],
     [1, 5, 4],
@@ -178,11 +180,33 @@ const D10 = (props) => {
     }
   })
 
-  // TODO Define groups
+  // Defining groups allows us to use a material array for BufferGeometry
+  useEffect(() => {
+    if (ref.current) {
+      for (let i = 0; i < sides; i++) {
+        ref.current.geometry.addGroup(i * verticesPerFace, verticesPerFace, i)
+      }
+      console.log(ref.current)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <Polyhedron args={args} ref={ref} onClick={() => api.applyImpulse([0, 20, 0], [0, 0, 0])} castShadow receiveShadow>
-      <meshNormalMaterial attach="material" />
+      {/* TODO What's causing text textures to appear stretched? Is the UV map messed up? */}
+      {/* {Array.from(Array(sides)).map((_, i) => (
+        <meshPhongMaterial attachArray="material" map={createTextTexture(i + 1, textColor, dieColor)} key={i} />
+      ))} */}
+      <meshPhongMaterial attachArray="material" color="grey" />
+      <meshPhongMaterial attachArray="material" color="white" />
+      <meshPhongMaterial attachArray="material" color="brown" />
+      <meshPhongMaterial attachArray="material" color="black" />
+      <meshPhongMaterial attachArray="material" color="azure" />
+      <meshPhongMaterial attachArray="material" color="beige" />
+      <meshPhongMaterial attachArray="material" color="cornflowerblue" />
+      <meshPhongMaterial attachArray="material" color="maroon" />
+      <meshPhongMaterial attachArray="material" color="darkgreen" />
+      <meshPhongMaterial attachArray="material" color="darkblue" />
     </Polyhedron>
   )
 }
