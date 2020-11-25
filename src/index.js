@@ -136,7 +136,7 @@ const D8 = (props) => {
 
 const D10 = (props) => {
   const sides = 10
-  const verticesPerFace = 6
+  const verticesPerFace = 6 // A quadrilateral is made of 2 triangles
   const radius = 2
   const vertices = [
     [0, 0, 1],
@@ -212,6 +212,8 @@ const D10 = (props) => {
 }
 
 const D12 = (props) => {
+  const sides = 12
+  const verticesPerFace = 9 // A pentagon is made of 3 triangles
   const radius = 2
   const dodecahedronGeometry = new THREE.DodecahedronGeometry(radius)
   const [ref, api] = useConvexPolyhedron(() => {
@@ -222,11 +224,35 @@ const D12 = (props) => {
     }
   })
 
-  // TODO Define groups
+  // Defining groups allows us to use a material array for BufferGeometry
+  useEffect(() => {
+    if (ref.current) {
+      for (let i = 0; i < sides; i++) {
+        ref.current.geometry.addGroup(i * verticesPerFace, verticesPerFace, i)
+      }
+      console.log(ref.current)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <Dodecahedron args={radius} ref={ref} onClick={() => api.applyImpulse([0, 20, 0], [0, 0, 0])} castShadow receiveShadow>
-      <meshNormalMaterial attach="material" />
+      {/* TODO What's causing text textures to appear stretched? Is the UV map messed up? */}
+      {/* {Array.from(Array(sides)).map((_, i) => (
+        <meshPhongMaterial attachArray="material" map={createTextTexture(i + 1, textColor, dieColor)} key={i} />
+      ))} */}
+      <meshPhongMaterial attachArray="material" color="grey" />
+      <meshPhongMaterial attachArray="material" color="white" />
+      <meshPhongMaterial attachArray="material" color="brown" />
+      <meshPhongMaterial attachArray="material" color="black" />
+      <meshPhongMaterial attachArray="material" color="azure" />
+      <meshPhongMaterial attachArray="material" color="beige" />
+      <meshPhongMaterial attachArray="material" color="cornflowerblue" />
+      <meshPhongMaterial attachArray="material" color="maroon" />
+      <meshPhongMaterial attachArray="material" color="darkgreen" />
+      <meshPhongMaterial attachArray="material" color="darkblue" />
+      <meshPhongMaterial attachArray="material" color="yellow" />
+      <meshPhongMaterial attachArray="material" color="darkgoldenrod" />
     </Dodecahedron>
   )
 }
