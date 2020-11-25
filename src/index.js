@@ -258,6 +258,8 @@ const D12 = (props) => {
 }
 
 const D20 = (props) => {
+  const sides = 20
+  const verticesPerFace = 3
   const radius = 2
   const icosahedronGeometry = new THREE.IcosahedronGeometry(radius)
   const [ref, api] = useConvexPolyhedron(() => {
@@ -268,11 +270,43 @@ const D20 = (props) => {
     }
   })
 
-  // TODO Define groups
+  // Defining groups allows us to use a material array for BufferGeometry
+  useEffect(() => {
+    if (ref.current) {
+      for (let i = 0; i < sides; i++) {
+        ref.current.geometry.addGroup(i * verticesPerFace, verticesPerFace, i)
+      }
+      console.log(ref.current)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <Icosahedron args={radius} ref={ref} onClick={() => api.applyImpulse([0, 20, 0], [0, 0, 0])} castShadow receiveShadow>
-      <meshNormalMaterial attach="material" />
+      {/* TODO What's causing text textures to appear stretched? Is the UV map messed up? */}
+      {/* {Array.from(Array(sides)).map((_, i) => (
+        <meshPhongMaterial attachArray="material" map={createTextTexture(i + 1, textColor, dieColor)} key={i} />
+      ))} */}
+      <meshPhongMaterial attachArray="material" color="grey" />
+      <meshPhongMaterial attachArray="material" color="white" />
+      <meshPhongMaterial attachArray="material" color="brown" />
+      <meshPhongMaterial attachArray="material" color="black" />
+      <meshPhongMaterial attachArray="material" color="azure" />
+      <meshPhongMaterial attachArray="material" color="beige" />
+      <meshPhongMaterial attachArray="material" color="cornflowerblue" />
+      <meshPhongMaterial attachArray="material" color="maroon" />
+      <meshPhongMaterial attachArray="material" color="darkgreen" />
+      <meshPhongMaterial attachArray="material" color="darkblue" />
+      <meshPhongMaterial attachArray="material" color="yellow" />
+      <meshPhongMaterial attachArray="material" color="darkgoldenrod" />
+      <meshPhongMaterial attachArray="material" color="darkcyan" />
+      <meshPhongMaterial attachArray="material" color="darkorange" />
+      <meshPhongMaterial attachArray="material" color="darkorchid" />
+      <meshPhongMaterial attachArray="material" color="darksalmon" />
+      <meshPhongMaterial attachArray="material" color="darkturquoise" />
+      <meshPhongMaterial attachArray="material" color="lightseagreen" />
+      <meshPhongMaterial attachArray="material" color="magenta" />
+      <meshPhongMaterial attachArray="material" color="navy" />
     </Icosahedron>
   )
 }
