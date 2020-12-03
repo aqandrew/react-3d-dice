@@ -34,6 +34,32 @@ const createTextTexture = (text, color, backColor) => {
   return texture
 }
 
+const createUvs = (sides, fl, tab, af) => {
+  // TODO Store tab and af as variables for each shape
+
+  const uvs = []
+
+  for (var i = 0; i < sides; ++i) {
+    var aa = (Math.PI * 2) / fl
+    for (var j = 0; j < fl - 2; ++j) {
+      // TODO This would probably make more sense as another inner loop from 0..2
+      uvs.push(
+        // u,v for first vector
+        (Math.cos(af) + 1 + tab) / 2 / (1 + tab),
+        (Math.sin(af) + 1 + tab) / 2 / (1 + tab),
+        // u,v for second vector
+        (Math.cos(aa * (j + 1) + af) + 1 + tab) / 2 / (1 + tab),
+        (Math.sin(aa * (j + 1) + af) + 1 + tab) / 2 / (1 + tab),
+        // u,v for third vector
+        (Math.cos(aa * (j + 2) + af) + 1 + tab) / 2 / (1 + tab),
+        (Math.sin(aa * (j + 2) + af) + 1 + tab) / 2 / (1 + tab)
+      )
+    }
+  }
+
+  return new Float32Array(uvs)
+}
+
 const Plane = ({ color, ...props }) => {
   const [ref] = usePlane(() => ({ ...props }))
   return (
@@ -111,6 +137,8 @@ const D8 = (props) => {
       for (let i = 0; i < sides; i++) {
         ref.current.geometry.addGroup(i * verticesPerFace, verticesPerFace, i)
       }
+
+      ref.current.geometry.setAttribute('uv', new THREE.Float32BufferAttribute(createUvs(sides, verticesPerFace, 0, -Math.PI / 8), 2))
       console.log(ref.current)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -118,18 +146,9 @@ const D8 = (props) => {
 
   return (
     <Octahedron args={radius} ref={ref} onClick={() => api.applyImpulse([0, 20, 0], [0, 0, 0])} castShadow receiveShadow>
-      {/* TODO What's causing text textures to appear stretched? Is the UV map messed up? */}
-      {/* {Array.from(Array(sides)).map((_, i) => (
+      {Array.from(Array(sides)).map((_, i) => (
         <meshPhongMaterial attachArray="material" map={createTextTexture(i + 1, textColor, dieColor)} key={i} />
-      ))} */}
-      <meshPhongMaterial attachArray="material" color="grey" />
-      <meshPhongMaterial attachArray="material" color="white" />
-      <meshPhongMaterial attachArray="material" color="brown" />
-      <meshPhongMaterial attachArray="material" color="black" />
-      <meshPhongMaterial attachArray="material" color="azure" />
-      <meshPhongMaterial attachArray="material" color="beige" />
-      <meshPhongMaterial attachArray="material" color="cornflowerblue" />
-      <meshPhongMaterial attachArray="material" color="maroon" />
+      ))}
     </Octahedron>
   )
 }
