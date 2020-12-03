@@ -30,6 +30,11 @@ const createTextTexture = (text, color, backColor) => {
   context.textBaseline = 'middle'
   context.fillStyle = color
   context.fillText(text, canvas.width / 2, canvas.height / 2)
+
+  if (text === '6' || text === '9') {
+    context.fillText('  .', canvas.width / 2, canvas.height / 2)
+  }
+
   const texture = new THREE.CanvasTexture(canvas)
   return texture
 }
