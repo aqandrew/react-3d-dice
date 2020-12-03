@@ -43,22 +43,20 @@ const createUvs = (sides, fl, tab, af) => {
   // TODO Store tab and af as variables for each shape
 
   const uvs = []
+  const aa = (Math.PI * 2) / fl
 
-  for (var i = 0; i < sides; ++i) {
-    var aa = (Math.PI * 2) / fl
-    for (var j = 0; j < fl - 2; ++j) {
-      // TODO This would probably make more sense as another inner loop from 0..2
-      uvs.push(
-        // u,v for first vector
-        (Math.cos(af) + 1 + tab) / 2 / (1 + tab),
-        (Math.sin(af) + 1 + tab) / 2 / (1 + tab),
-        // u,v for second vector
-        (Math.cos(aa * (j + 1) + af) + 1 + tab) / 2 / (1 + tab),
-        (Math.sin(aa * (j + 1) + af) + 1 + tab) / 2 / (1 + tab),
-        // u,v for third vector
-        (Math.cos(aa * (j + 2) + af) + 1 + tab) / 2 / (1 + tab),
-        (Math.sin(aa * (j + 2) + af) + 1 + tab) / 2 / (1 + tab)
-      )
+  for (let i = 0; i < sides; ++i) {
+    for (let j = 0; j < fl - 2; ++j) {
+      for (let k = 0; k < 3; ++k) {
+        const theta = aa * (j + k)
+
+        uvs.push(
+          // u
+          (Math.cos(theta + af) + 1 + tab) / 2 / (1 + tab),
+          // v
+          (Math.sin(theta + af) + 1 + tab) / 2 / (1 + tab)
+        )
+      }
     }
   }
 
