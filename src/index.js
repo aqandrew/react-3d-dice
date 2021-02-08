@@ -47,20 +47,26 @@ const createUvs = (sides, fl, tab, af) => {
 
   for (let i = 0; i < sides; ++i) {
     for (let j = 0; j < fl - 2; ++j) {
+      const uvLayer = []
+
       for (let k = 0; k < 3; ++k) {
         const theta = aa * (j + k)
 
-        uvs.push(
-          // u
-          (Math.cos(theta + af) + 1 + tab) / 2 / (1 + tab),
-          // v
-          (Math.sin(theta + af) + 1 + tab) / 2 / (1 + tab)
+        uvLayer.push(
+          new THREE.Vector2(
+            // u
+            (Math.cos(theta + af) + 1 + tab) / 2 / (1 + tab),
+            // v
+            (Math.sin(theta + af) + 1 + tab) / 2 / (1 + tab)
+          )
         )
       }
+
+      uvs.push(uvLayer)
     }
   }
 
-  return new Float32Array(uvs)
+  return uvs
 }
 
 const Plane = ({ color, ...props }) => {
@@ -134,25 +140,24 @@ const D8 = (props) => {
     }
   })
 
-  // Defining groups allows us to use a material array for BufferGeometry
   useEffect(() => {
     if (ref.current) {
-      for (let i = 0; i < sides; i++) {
-        ref.current.geometry.addGroup(i * verticesPerFace, verticesPerFace, i)
-      }
-
-      ref.current.geometry.setAttribute('uv', new THREE.Float32BufferAttribute(createUvs(sides, verticesPerFace, 0, -Math.PI / 8), 2))
+      ref.current.geometry.faceVertexUvs[0] = createUvs(sides, verticesPerFace, 0, -Math.PI / 8)
+      // TODO Why does only '1' show up?
+      // ref.current.geometry.uvsNeedUpdate = true
+      ref.current.geometry.computeFaceNormals()
       console.log(ref.current)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
-    <Octahedron args={radius} ref={ref} onClick={() => api.applyImpulse([0, 20, 0], [0, 0, 0])} castShadow receiveShadow>
+    <mesh ref={ref} onClick={() => api.applyImpulse([0, 20, 0], [0, 0, 0])} castShadow receiveShadow>
+      <octahedronGeometry args={radius} attach="geometry" />
       {Array.from(Array(sides)).map((_, i) => (
         <meshPhongMaterial attachArray="material" map={createTextTexture(i + 1, textColor, dieColor)} key={i} />
       ))}
-    </Octahedron>
+    </mesh>
   )
 }
 
@@ -295,20 +300,24 @@ const D20 = (props) => {
   // Defining groups allows us to use a material array for BufferGeometry
   useEffect(() => {
     if (ref.current) {
-      for (let i = 0; i < sides; i++) {
-        ref.current.geometry.addGroup(i * verticesPerFace, verticesPerFace, i)
-      }
+      // for (let i = 0; i < sides; i++) {
+      //   ref.current.geometry.addGroup(i * verticesPerFace, verticesPerFace, i)
+      // }
+      // ref.current.
       console.log(ref.current)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
-    <Icosahedron args={radius} ref={ref} onClick={() => api.applyImpulse([0, 20, 0], [0, 0, 0])} castShadow receiveShadow>
+    // <Icosahedron args={radius} ref={ref} onClick={() => api.applyImpulse([0, 20, 0], [0, 0, 0])} castShadow receiveShadow>
+    <mesh ref={ref} onClick={() => api.applyImpulse([0, 20, 0], [0, 0, 0])} castShadow receiveShadow>
+      <icosahedronGeometry attach="geometry" args={radius} />
       {/* TODO What's causing text textures to appear stretched? Is the UV map messed up? */}
       {/* {Array.from(Array(sides)).map((_, i) => (
         <meshPhongMaterial attachArray="material" map={createTextTexture(i + 1, textColor, dieColor)} key={i} />
       ))} */}
+      {/* <meshNormalMaterial attach="material" /> */}
       <meshPhongMaterial attachArray="material" color="grey" />
       <meshPhongMaterial attachArray="material" color="white" />
       <meshPhongMaterial attachArray="material" color="brown" />
@@ -329,7 +338,8 @@ const D20 = (props) => {
       <meshPhongMaterial attachArray="material" color="lightseagreen" />
       <meshPhongMaterial attachArray="material" color="magenta" />
       <meshPhongMaterial attachArray="material" color="navy" />
-    </Icosahedron>
+      {/* </Icosahedron> */}
+    </mesh>
   )
 }
 
@@ -344,13 +354,13 @@ ReactDOM.render(
       <Plane color={niceColors[17][2]} position={[10, 0, 0]} rotation={[0, -1, 0]} />
       <Plane color={niceColors[17][3]} position={[0, 10, 0]} rotation={[1, 0, 0]} />
       <Plane color={niceColors[17][0]} position={[0, -10, 0]} rotation={[-1, 0, 0]} />
-      <D4 position={[-4, 0, 2]} rotation={[0, 1, 0]} />
-      <D6 position={[0, 0, 2]} />
+      {/* <D4 position={[-4, 0, 2]} rotation={[0, 1, 0]} />
+      <D6 position={[0, 0, 2]} /> */}
       <D8 position={[0, 4, 2]} rotation={[1, 1, 0]} />
-      <D10 position={[-4, -4, 2]} rotation={[0, 1, 0]} />
+      {/* <D10 position={[-4, -4, 2]} rotation={[0, 1, 0]} />
       <D10 position={[4, -4, 2]} rotation={[0.5, -1, 0]} />
       <D12 position={[0, -4, 2]} rotation={[1, 0, 0]} />
-      <D20 position={[4, 0, 2]} rotation={[2, 0, 0]} />
+      <D20 position={[4, 0, 2]} rotation={[2, 0, 0]} /> */}
     </Physics>
   </Canvas>,
   document.getElementById('root')
