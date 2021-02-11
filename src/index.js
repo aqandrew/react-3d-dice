@@ -166,7 +166,8 @@ const D10 = (props) => {
   ].flat()
 
   // https://github.com/byWulf/threejs-dice/blob/master/lib/dice.js#L499
-  for (let i = 0, b = 0; i < 10; ++i, b += (Math.PI * 2) / 10) {
+  for (let i = 0; i < sides; ++i) {
+    const b = (i * Math.PI * 2) / sides
     vertices.push(-Math.cos(b), -Math.sin(b), 0.105 * (i % 2 ? 1 : -1))
   }
 
