@@ -2,6 +2,8 @@
 
 Forked from [this use-cannon demo](https://codesandbox.io/s/r3f-cannon-instanced-physics-devf8).
 
+[How the D10 was created](https://aqandrew.com/blog/10-sided-die-react/)
+
 ## Acknowledgments
 
 - Anton Natarov, for creating a [sweet three.js/cannon.js dice roller](http://a.teall.info/dice) under public domain
